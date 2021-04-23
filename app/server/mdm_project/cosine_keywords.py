@@ -1,10 +1,10 @@
 import pandas as pd
 
-titles = pd.read_csv('/Users/jainipatel/Spring2021/MDM/archive/titles_metadata.csv')
-indices = pd.read_csv("/Users/jainipatel/Spring2021/MDM/archive/indices_metadata.csv")
-movie_link_md = pd.read_csv("/Users/jainipatel/Spring2021/MDM/archive/movies_metadata.csv")
+titles = pd.read_csv('titles_metadata.csv')
+indices = pd.read_csv("indices_metadata.csv")
+movie_link_md = pd.read_csv("movies_metadata.csv")
 
-cosine_sim_keywords = pd.read_csv("/Users/jainipatel/Downloads/temp.csv", header = None)
+cosine_sim_keywords = pd.read_csv("cosine_similarity_matrix_metadata.csv", header = None)
 
 def get_recommendations_keywords(title):
     print((indices['title'][indices['title']==title]).index[0])

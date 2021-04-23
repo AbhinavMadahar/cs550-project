@@ -1,8 +1,8 @@
 import pandas as pd
 
-titles = pd.read_csv('/Users/jainipatel/Spring2021/MDM/archive/titles.csv')
-indices = pd.read_csv("/Users/jainipatel/Spring2021/MDM/archive/indices.csv")
-cosine_sim = pd.read_csv("/Users/jainipatel/Downloads/temp.csv", header = None)
+titles = pd.read_csv('titles.csv')
+indices = pd.read_csv("indices.csv")
+cosine_sim = pd.read_csv("cosine_similarity_matrix.csv", header = None)
 
 def get_recommendations(title):
     print((indices['title'][indices['title']==title]).index[0])

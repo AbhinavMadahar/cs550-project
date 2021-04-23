@@ -1,7 +1,14 @@
+"""
+Starts the server for the movie recommender.
+To run it, you have to give the filepath where you keep the cosine similarity matrix, e.g.
+    python server.py data/matrix.csv
+"""
+
 import pandas as pd
 from flask import Flask, request
+from sys import argv
 
-cosine_similarity_matrix = pd.read_csv('cosine_similarity_matrix.csv').to_numpy()[:, 1:]
+cosine_similarity_matrix = pd.read_csv(argv[1]).to_numpy()[:, 1:]
 indices = pd.read_csv('indices.csv', dtype={'title': 'str', 'index': int})
 movie_to_index = {title:index for title, index in zip(indices['title'], indices['index'])}
 

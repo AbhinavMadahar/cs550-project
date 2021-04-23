@@ -1,4 +1,5 @@
 document.getElementById('movie').oninput = async function (event) {
+    document.getElementById('query-movie').innerHTML = '';
     document.getElementById('recommendations').innerHTML = '';
 
     const titles = [];
@@ -17,6 +18,7 @@ document.getElementById('movie').oninput = async function (event) {
         return;
     }
 
-    const list = titles.map(title => `<li class="recommendation">${title}</li>`).reduce((acc, cum) => acc + cum);
+    document.getElementById('query-movie').innerHTML = 'Movies similar to ' + titles[0];
+    const list = titles.slice(1, titles.length).map(title => `<li class="recommendation">${title}</li>`).reduce((acc, cum) => acc + cum);
     document.getElementById('recommendations').innerHTML = list;
 }

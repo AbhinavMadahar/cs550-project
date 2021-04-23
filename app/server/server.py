@@ -1,7 +1,8 @@
 import pandas as pd
 
-cosine_similarity_matrix = pd.read_csv('cosine_similarity_matrix.csv')
-movies_metadata = pd.read_csv('movies_metadata.csv')
+cosine_similarity_matrix = pd.read_csv('cosine_similarity_matrix.csv').to_numpy()[:, 1:]
+indices = pd.read_csv('indices.csv', dtype={'title': 'str', 'index': int})
+movie_to_index = {title:index for title, index in zip(indices['title'], indices['index'])}
 
 def similar(movie: str) -> [(str, float)]:
     """
@@ -9,7 +10,6 @@ def similar(movie: str) -> [(str, float)]:
     
     Arguments:
         movie: The full name of the movie for which to search. 
-               This is case insensitive.
     
     Returns:
         A list of 2-tuples where the first tuple is the name of the other movie and the second tuple is its cosine similarity with the query movie.
@@ -19,5 +19,9 @@ def similar(movie: str) -> [(str, float)]:
     Raises:
         ValueError if the movie is not in the dataset. This also occurs if you misspell the name (e.g. you write Spoderman instead of Spiderman).
     """
+
+    index = movie_to_index[movie]
+    similarity_scores = cosine_similarity_matrix[index]
+    other_movies = sorted(list(zip(indices['title'], similarity_scores)), key=lambda pair: -pair[1])
     
-    raise NotImplementedError
+    return other_movies[1:]  # we exclude the first movie because it's the query movie

@@ -16,12 +16,9 @@ body {
     text-align: center;
 }
 
-body * {
-    display: inline-block;  
-}
-
 .column {
     max-width: 30em;
+	display: inline;
 }
 
 .tip {
@@ -39,4 +36,8 @@ body * {
 	100% {
 		background-position: 0% 50%;
 	}
+}
+
+#recommendations {
+	list-style: none;
 }

@@ -1,4 +1,5 @@
 import pandas as pd
+from flask import Flask, request
 
 cosine_similarity_matrix = pd.read_csv('cosine_similarity_matrix.csv').to_numpy()[:, 1:]
 indices = pd.read_csv('indices.csv', dtype={'title': 'str', 'index': int})
@@ -25,3 +26,17 @@ def similar(movie: str) -> [(str, float)]:
     other_movies = sorted(list(zip(indices['title'], similarity_scores)), key=lambda pair: -pair[1])
     
     return other_movies[1:]  # we exclude the first movie because it's the query movie
+
+app = Flask(__name__)
+
+@app.route('/recommendation')
+def recommendation():
+    movie = request.args.get('movie')
+    try:
+        return str(similar(movie)[:10])
+    except KeyError:
+        # the movie was not in the dataset
+        return '[]'
+
+if __name__ == "__main__":
+    app.run(debug=True)

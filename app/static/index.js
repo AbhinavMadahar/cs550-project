@@ -15,6 +15,10 @@ document.getElementById('movie').oninput = async function (event) {
     }
 
     if (titles.length === 0) {
+        if (query !== '') {
+          document.getElementById('query-movie').innerHTML = `${query} not found`;
+        }
+
         return;
     }
 

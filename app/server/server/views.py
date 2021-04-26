@@ -12,17 +12,19 @@ def index(request):
         # print(movie)
         recommendation = request.GET.get("recommendation")
         # print(recommendation)
-        if movie:
-            if recommendation == "movies":
-                result = get_recommendations(movie)
-            elif recommendation == "popularity":
-                result = improved_recommendations(movie)
-                result = list(result['title'])
-            elif recommendation == "keyword":
-                result = get_recommendations_keywords(movie)
-                # result = list(result['title'])
-        else:
-            result = ''
-        # print(result)
+        try:
+            if movie:
+                if recommendation == "movies":
+                    result = get_recommendations(movie)
+                elif recommendation == "popularity":
+                    result = improved_recommendations(movie)
+                    result = list(result['title'])
+                elif recommendation == "keyword":
+                    result = get_recommendations_keywords(movie)
+                    # result = list(result['title'])
+            else:
+                result = ''
+        except KeyError:
+            result = 'Movie does not exist! Please check your movie spelling.'
 
     return render(request, 'index.html', {'result':result})

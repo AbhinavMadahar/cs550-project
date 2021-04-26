@@ -2,27 +2,29 @@ import pandas as pd
 import subprocess
 from sys import argv
 
-'''indices_metadata file has all the movie titles and corresponding indicies.
-movie_link_md file has detailed information about the movie.'''
+# indices_metadata file has all the movie titles and corresponding indicies.
+# movie_link_md file has detailed information about the movie.
 
 indices = pd.read_csv("indices_metadata.csv", dtype={'title': 'str', 'index': int})
 movie_link_md = pd.read_csv("movies_link_metadata.csv")
 
 cosine_similarity_matrix_metadata = "cosine_similarity_matrix_metadata.csv"
 
-'''make a dictionary to store the movies and indices as key-value pairs'''
+# make a dictionary to store the movies and indices as key-value pairs
 movie_to_index = {}
 for title,index in zip(indices['title'], indices['index']):
     if title not in movie_to_index:
         movie_to_index[title]=index
 
-'''This recommendation recommends the similar movies on the basis of the keywords and popularity and ratings of
-the movie. The vote counts and average number of votes are obtained from the metadata and weighted ratings are calculated.
-The keywords and the cast and crew of the movies are considered to find the cosine similarity matrix.
-And top 30 similar movies found using cosine matrix are then sorted on the basis of the weighted ratings and top 10 movies are then recommended to the user.'''
+# This recommendation recommends the similar movies on the basis of the
+# keywords and popularity and ratings of the movie. The vote counts and average
+# number of votes are obtained from the metadata and weighted ratings are
+# calculated. The keywords and the cast and crew of the movies are considered
+# to find the cosine similarity matrix. And top 30 similar movies found using
+# cosine matrix are then sorted on the basis of the weighted ratings and top 10
+# movies are then recommended to the user.
 
-
-def improved_recommendations(title):
+def improved_recommendations(title: str) -> [int]:
     """
     Arguments:
         movie: The full name of the movie for which to search. 

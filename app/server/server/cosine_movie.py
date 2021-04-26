@@ -16,12 +16,12 @@ for title,index in zip(indices['title'], indices['index']):
         movie_to_index[title]=index
 
 
-'''This recommendation recommends the similar movies on the basis of the description and tagline of
-the movie. The description and the tagline columns are used to make the cosine similarity matrix.'''
-
-
 def get_recommendations(movie):
     """
+    This recommendation recommends the similar movies on the basis of the
+    description and tagline of the movie. The description and the tagline columns
+    are used to make the cosine similarity matrix.
+
     Arguments:
         movie: The full name of the movie for which to search. 
     
@@ -31,7 +31,7 @@ def get_recommendations(movie):
     Raises:
         ValueError if the movie is not in the dataset. This also occurs if you misspell the name (e.g. you write Spoderman instead of Spiderman).
     """
-    
+
     index = movie_to_index[movie]
     process = subprocess.Popen([f"sed -n '{index+2}p' {cosine_similarity_matrix}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     similarity_scores = process.communicate()[0].split(b',')[1:]

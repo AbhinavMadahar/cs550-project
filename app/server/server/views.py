@@ -6,25 +6,23 @@ from .cosine_keywords import get_recommendations_keywords
 
 def index(request):
     result = None
-    if request.method == "POST":
+    if request.method == "GET":
         # print("Before",request.POST)
-        movie = request.POST.get("movie")
+        movie = request.GET.get("movie")
         # print(movie)
-        recommendation = request.POST.get("recommendation")
+        recommendation = request.GET.get("recommendation")
         # print(recommendation)
         if movie:
-            if recommendation == "movies": 
-                result = get_recommendations(movie).head(10)
-                result = list(result['title'])
+            if recommendation == "movies":
+                result = get_recommendations(movie)
             elif recommendation == "popularity":
                 result = improved_recommendations(movie)
                 result = list(result['title'])
             elif recommendation == "keyword":
-                result = get_recommendations_keywords(movie).head(10)
-                result = list(result['title'])
+                result = get_recommendations_keywords(movie)
+                # result = list(result['title'])
         else:
-            result = "Please Enter Valid Movie Name!"
+            result = ''
         # print(result)
 
     return render(request, 'index.html', {'result':result})
-    

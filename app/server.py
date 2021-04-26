@@ -8,7 +8,7 @@ You can optionally give a port; by default, it uses port 5000.
 import math
 import pandas as pd
 import subprocess
-from enum import enum
+from enum import Enum
 from flask import Flask, redirect, request
 from sys import argv
 
@@ -45,23 +45,23 @@ def similar(movie: str, technique: RecommendationTechniques) -> [(str, float)]:
 
     if technique == RecommendationTechniques.popularity:
         index = movie_to_index[movie]
-        process = subprocess.Popen([f"sed -n '{index+2}p' {cosine_similarity_matrix)}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen([f"sed '{index+2}d;' {cosine_similarity_matrix}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         similarity_scores = process.communicate()[0].split(b',')[1:]
         other_movies = sorted(list(zip(indices['title'], similarity_scores)), key=lambda pair: pair[1])[::-1]
 
-    elif technique == RecommendationTechniques.keywords:
+    elif technique == RecommendationTechniques.keyword:
         index = movie_to_index_metadata[movie]
-        process = subprocess.Popen([f"sed -n '{index+2}p' {cosine_similarity_matrix_metadata)}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen([f"sed '{index+2}d;' {cosine_similarity_matrix_metadata}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         similarity_scores = process.communicate()[0].split(b',')[1:]
         other_movies = sorted(list(zip(indices['title'], similarity_scores)), key=lambda pair: pair[1])[::-1]
 
     elif technique == RecommendationTechniques.metadata:
         top_n = 30  # after using the metadata cosine similarity matrix to sort the other movies, select this many to further investigate
 
-        index = movie_to_index_metadata[title]
-        process = subprocess.Popen([f"sed -n '{index+2}p' {cosine_similarity_matrix_metadata}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        index = movie_to_index_metadata[movie]
+        process = subprocess.Popen([f"sed '{index+2}d;' {cosine_similarity_matrix_metadata}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         similarity_scores = process.communicate()[0].split(b',')[1:]
-        index_similar = [index for index, score in sorted(list(enumerate(similarity_scores))), key=lambda pair: pair[1])[:top_n]]
+        index_similar = [index for index, score in sorted(list(enumerate(similarity_scores)), key=lambda pair: pair[1])[:top_n]]
 
         # calculate the weighted ratings of similar movies.
         movies = movie_link_metadata.iloc[index_similar][['title', 'vote_count', 'vote_average', 'year']]
@@ -85,10 +85,11 @@ app = Flask(__name__)
 @app.route('/recommendation')
 def recommendation():
     movie = request.args.get('movie')
-    if movie == '':
+    technique = request.args.get('technique')
+    if movie == '' or technique == '':
         return '[]'
     try:
-        return str(similar(movie)[:10])
+        return str(similar(movie, RecommendationTechniques[technique])[:10])
     except KeyError:
         return '[]'
 

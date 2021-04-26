@@ -5,7 +5,7 @@ document.getElementById('movie').oninput = async function (event) {
     const titles = [];
 
     const query = this.value;
-    const response = await fetch(`/recommendation?movie=${query}`);
+    const response = await fetch(`/recommendation?movie=${query}?technique=popularity`);
     const results = await response.text();
     const recommendations = results.matchAll(/\(.*?\),/g);
     for (let recommendation of recommendations) {

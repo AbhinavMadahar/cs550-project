@@ -9,7 +9,7 @@ import math
 import pandas as pd
 import subprocess
 from enum import Enum
-from flask import Flask, redirect, request
+from flask import Flask, request, send_from_directory
 from sys import argv
 
 cosine_similarity_matrix = argv[1]
@@ -98,7 +98,7 @@ def recommendation():
 
 @app.route('/')
 def homepage():
-    return redirect('/static/index.html', code=200)
+    return send_from_directory('static', 'index.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)

@@ -5,7 +5,7 @@ document.getElementById('movie').oninput = async function (event) {
     const addRecommendationsUsingTechnique = async (technique) => {
         document.getElementById(`${technique}-recommendations`).innerHTML = '';
 
-        const titles = [`<strong>Based on ${technique}</strong>`];
+        const titles = [];
         const response = await fetch(`/recommendation?movie=${query}&technique=${technique}`);
         const results = await response.text();
         const recommendations = results.matchAll(/\(.*?\),/g);
@@ -25,7 +25,8 @@ document.getElementById('movie').oninput = async function (event) {
 
         document.getElementById('query-movie').innerHTML = 'Movies similar to ' + query;
         const list = titles.slice(1, titles.length).map(title => `<li class="recommendation">${title}</li>`).reduce((acc, cum) => acc + cum);
-        document.getElementById(`${technique}-recommendations`).innerHTML = list;
+        const techniqueDescription = `<li class="recommendation"><strong>Based on ${technique}</strong></li>`;
+        document.getElementById(`${technique}-recommendations`).innerHTML = techniqueDescription + list;
     }
     addRecommendationsUsingTechnique('popularity');
     addRecommendationsUsingTechnique('keyword');

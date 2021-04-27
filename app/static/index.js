@@ -8,6 +8,9 @@ document.getElementById('movie').oninput = async function (event) {
         const titles = [];
         const response = await fetch(`/recommendation?movie=${query}&technique=${technique}`);
         const results = await response.text();
+        if (query !== document.getElementById('movie').value) {
+            return;
+        }
         const recommendations = results.matchAll(/\(.*?\),/g);
         for (let recommendation of recommendations) {
             const parts = recommendation[0].match(/(.*)\ (.*)/);

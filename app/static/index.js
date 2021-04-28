@@ -1,28 +1,36 @@
 document.getElementById('movie').oninput = async function (event) {
     document.getElementById('query-movie').innerHTML = '';
-    document.getElementById('recommendations').innerHTML = '';
-
-    const titles = [];
 
     const query = this.value;
-    const response = await fetch(`/recommendation?movie=${query}?technique=popularity`);
-    const results = await response.text();
-    const recommendations = results.matchAll(/\(.*?\),/g);
-    for (let recommendation of recommendations) {
-        const parts = recommendation[0].match(/(.*)\ (.*)/);
-        const title = parts[1].substring(2, parts[1].length-2);
-        titles.push(title)
-    }
+    const addRecommendationsUsingTechnique = async (technique) => {
+        document.getElementById(`${technique}-recommendations`).innerHTML = '';
 
-    if (titles.length === 0) {
-        if (query !== '') {
-          document.getElementById('query-movie').innerHTML = `${query} not found`;
+        const titles = [];
+        const response = await fetch(`/recommendation?movie=${query}&technique=${technique}`);
+        const results = await response.text();
+        if (query !== document.getElementById('movie').value) {
+            return;
+        }
+        const recommendations = results.matchAll(/\(.*?\),/g);
+        for (let recommendation of recommendations) {
+            const parts = recommendation[0].match(/(.*)\ (.*)/);
+            const title = parts[1].substring(2, parts[1].length-2);
+            titles.push(title)
         }
 
-        return;
-    }
+        if (titles.length === 0) {
+            if (query !== '') {
+              document.getElementById('query-movie').innerHTML = `${query} not found`;
+            }
 
-    document.getElementById('query-movie').innerHTML = 'Movies similar to ' + titles[0];
-    const list = titles.slice(1, titles.length).map(title => `<li class="recommendation">${title}</li>`).reduce((acc, cum) => acc + cum);
-    document.getElementById('recommendations').innerHTML = list;
+            return;
+        }
+
+        document.getElementById('query-movie').innerHTML = 'Movies similar to ' + query;
+        const list = titles.slice(1, titles.length).map(title => `<li class="recommendation">${title}</li>`).reduce((acc, cum) => acc + cum);
+        const techniqueDescription = `<li class="recommendation"><strong>Based on ${technique}</strong></li>`;
+        document.getElementById(`${technique}-recommendations`).innerHTML = techniqueDescription + list;
+    }
+    addRecommendationsUsingTechnique('popularity');
+    addRecommendationsUsingTechnique('keyword');
 }

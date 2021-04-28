@@ -5,22 +5,35 @@
     <title>Movie Recommender</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="index.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" rel="stylesheet" />
+    <link href="/static/index.css" rel="stylesheet" />
   </head>
   <body>
-    <div class="column">
+    <div class="row">
       <h1>Movie Recommender</h1>
+    </div>
+    <div class="row">
       <p class="tip">
         Do you like to watch movies?
         Do you want to find other movies which you like?
         If so, you've come to the right site!
         Use the search bar below to search for a movie you liked, and we'll give you a list of similar movies.
       </p>
-      <input id="movie" />
-      <br />
-      <h2 id="query-movie"></h2>
-      <ul id="recommendations"><!--We add the recommendations here--></ul>
     </div>
-    <script src="index.js"></script>
+    <div class="row">
+      <input id="movie" />
+    </div>
+    <div class="row">
+      <h2 id="query-movie"></h2>
+    </div>
+    <div class="row">
+      <div class="six columns">
+        <ul id="popularity-recommendations" class="recommendations"><!--We add the recommendations from the popularity technique here--></ul>
+      </div>
+      <div class="six columns">
+        <ul id="keyword-recommendations" class="recommendations"><!--We add the recommendations from the metadata technique here--></ul>
+      </div>
+    </div>
+    <script src="/static/index.js"></script>
   </body>
 </html>

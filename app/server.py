@@ -9,7 +9,7 @@ import math
 import pandas as pd
 import subprocess
 from enum import Enum
-from flask import Flask, redirect, request
+from flask import Flask, request, send_from_directory
 from sys import argv
 
 cosine_similarity_matrix = argv[1]
@@ -36,6 +36,7 @@ def similar(movie: str, technique: RecommendationTechniques) -> [(str, float)]:
     
     Returns:
         A list of 2-tuples where the first tuple is the name of the other movie and the second tuple is its cosine similarity with the query movie.
+        The query movie is never in this list because it is obviously the most similar.
         Also, the list is sorted ascendingly by the cosine similarity so that the most similar movies are first the least similar are last.
 
     Raises:
@@ -45,15 +46,17 @@ def similar(movie: str, technique: RecommendationTechniques) -> [(str, float)]:
 
     if technique == RecommendationTechniques.popularity:
         index = movie_to_index[movie]
-        process = subprocess.Popen([f"sed '{index+2}d;' {cosine_similarity_matrix}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        similarity_scores = process.communicate()[0].split(b',')[1:]
-        other_movies = sorted(list(zip(indices['title'], similarity_scores)), key=lambda pair: pair[1])[::-1]
+        command = f"sed '{index+2}!d;q' {cosine_similarity_matrix}"
+        process = subprocess.Popen([command], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        similarity_scores = process.stdout.readline().split(b',')[1:]
+        other_movies = sorted(list(zip(indices['title'], similarity_scores)), key=lambda pair: pair[1])[::-1][1:]
 
     elif technique == RecommendationTechniques.keyword:
         index = movie_to_index_metadata[movie]
-        process = subprocess.Popen([f"sed '{index+2}d;' {cosine_similarity_matrix_metadata}"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        similarity_scores = process.communicate()[0].split(b',')[1:]
-        other_movies = sorted(list(zip(indices['title'], similarity_scores)), key=lambda pair: pair[1])[::-1]
+        command = f"sed '{index+2}!d;q' {cosine_similarity_matrix_metadata}"
+        process = subprocess.Popen([command], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        similarity_scores = process.stdout.readline().split(b',')[1:]
+        other_movies = sorted(list(zip(indices_metadata['title'], similarity_scores)), key=lambda pair: pair[1])[::-1][1:]
 
     elif technique == RecommendationTechniques.metadata:
         top_n = 30  # after using the metadata cosine similarity matrix to sort the other movies, select this many to further investigate
@@ -95,7 +98,7 @@ def recommendation():
 
 @app.route('/')
 def homepage():
-    return redirect('/static/index.html', code=200)
+    return send_from_directory('static', 'index.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)
